@@ -127,9 +127,19 @@ EOF
 
 # Attach Policies to ECS Task Execution Role (adjust policies as needed)
 resource "aws_iam_role_policy_attachment" "ecs_execution_role_attachment" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"  # Attach policies as needed
+   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess" # Attach policies as needed
+  role       = aws_iam_role.ecs_execution_role.name
+   
+}
+
+#Policy for cloudwatch logs
+resource "aws_iam_role_policy_attachment" "ecs_execution_role_attachment_ECS" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"  # Amazon ECS managed policy
   role       = aws_iam_role.ecs_execution_role.name
 }
+
+
+
 
 # ECS Task Definition
 resource "aws_ecs_task_definition" "my_task_definition" {

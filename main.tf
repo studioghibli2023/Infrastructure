@@ -99,7 +99,10 @@ resource "aws_ecr_repository" "my_ecr_repo" {
 ###############################  ECS  ############################################
 
 
-
+# Create ECS Cluster
+resource "aws_ecs_cluster" "my_ecs_cluster" {
+  name = "${var.environment_name}-ecs-cluster"
+}
 
 ##############################  Outputs  #########################################
 

@@ -1,6 +1,8 @@
+#############################  VPC  #################################
+
 # Define the environment name
 variable "environment_name" {
-  default = "TBBT"
+  default = "tbbt"
 }
 
 # Create VPC
@@ -78,4 +80,30 @@ resource "aws_route_table_association" "public_association" {
 resource "aws_route_table_association" "private_association" {
   subnet_id      = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private_route_table.id
+}
+
+
+#############################  ECR Repository  #################################
+
+# Create ECR Repository
+resource "aws_ecr_repository" "my_ecr_repo" {
+  name = "${var.environment_name}-ecr-repo"
+
+  image_tag_mutability = "MUTABLE"  # You can customize this as needed
+
+  tags = {
+    Name = "${var.environment_name}-ecr-repo"
+  }
+}
+
+###############################  ECS  ############################################
+
+
+
+
+##############################  Outputs  #########################################
+
+# Output ECR URI
+output "ecr_repository_uri" {
+  value = aws_ecr_repository.my_ecr_repo.repository_url
 }

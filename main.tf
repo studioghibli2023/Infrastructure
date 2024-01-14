@@ -1,6 +1,10 @@
 ###  AWS Fargate setup  ###
 
 
+provider "aws" {
+  region = var.region
+}
+
 #############################  VPC  #################################
 
 # Create VPC
@@ -227,7 +231,7 @@ resource "aws_ecs_task_definition" "my_task_definition" {
   # ECS Container
   container_definitions = jsonencode([
     {
-      name  = "tbbt-container"
+      name  = var.container_name
       image = aws_ecr_repository.my_ecr_repo.repository_url
       portMappings = [
         {
@@ -250,9 +254,3 @@ resource "aws_ecs_task_definition" "my_task_definition" {
 
 
 
-##############################  Outputs  #########################################
-
-# Output ECR URI
-output "ecr_repository_uri" {
-  value = aws_ecr_repository.my_ecr_repo.repository_url
-}

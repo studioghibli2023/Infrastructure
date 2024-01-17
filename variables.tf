@@ -16,3 +16,17 @@ variable "container_name" {
   type        = string
   default     = "studio-ghibli-container"
 }
+
+
+#enable for secure credentials
+#variable "db-username" {
+  #description = "Define database username"
+  #type        = string
+  #sensitive   = true
+#}
+
+#variable "db-password" {
+  #description = "Define database password"
+  #type        = string
+ #sensitive   = true
+#}

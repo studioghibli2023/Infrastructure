@@ -6,4 +6,5 @@ This template deploys a VPC, with a pair of public and private subnets spread
   and default routes for them in the private subnets.
 It deploys an ECR repository, ECS Cluster, task definition and service task using FARGATE, security group, and IAM roles and permissions.
 Container port is set to 3000, and fargate containers are placed in the private subnets.
-It also deploys a Load Balancer to access the web application.
+It deploys a Load Balancer to access the web application.
+It deploys an RDS Database within the private subnets.

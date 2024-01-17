@@ -1,4 +1,4 @@
-###  AWS Fargate setup  ###
+###  AWS ECS Fargate Terraform  ###
 
 
 provider "aws" {
@@ -95,12 +95,12 @@ resource "aws_nat_gateway" "my_nat_gateway" {
 
 # Create NAT Gateway 2
 #resource "aws_nat_gateway" "my_nat_gateway_2" {
-  #allocation_id = aws_eip.nat_2.id
- #subnet_id     = aws_subnet.public_subnet_2.id
-  #tags = {
-    #Name = "${var.environment_name}-nat-gateway-2"
-  #}
- # depends_on = [aws_internet_gateway.my_igw]
+#allocation_id = aws_eip.nat_2.id
+#subnet_id     = aws_subnet.public_subnet_2.id
+#tags = {
+#Name = "${var.environment_name}-nat-gateway-2"
+#}
+# depends_on = [aws_internet_gateway.my_igw]
 #}
 
 
@@ -169,9 +169,6 @@ resource "aws_ecr_repository" "my_ecr_repo" {
     Name = "${var.environment_name}-ecr-repo"
   }
 }
-
-#############################  ECR Security Group  #################################
-
 
 
 ###############################  ECS Cluster ############################################
@@ -248,8 +245,8 @@ resource "aws_ecs_task_definition" "my_task_definition" {
 }
 
 
-###############################  ECS Service Task ############################################
 
+#############################  ECR Security Group  #################################
 
 
 
@@ -283,6 +280,7 @@ resource "aws_security_group" "ecs_security_group" {
   }
 }
 
+###############################  ECS Service Task ############################################
 # ECS Service
 resource "aws_ecs_service" "my_service" {
   name            = "${var.environment_name}-ecs-service-task"
@@ -290,12 +288,12 @@ resource "aws_ecs_service" "my_service" {
   task_definition = aws_ecs_task_definition.my_task_definition.arn
   launch_type     = "FARGATE"
   desired_count   = 1
-  
+
 
   load_balancer {
     target_group_arn = aws_lb_target_group.my_target_group.arn
     container_name   = "studio-ghibli-container"
-    container_port   = 3000
+    container_port   = 3000   #Change this if application container use different port
   }
 
   network_configuration {
@@ -314,16 +312,16 @@ resource "aws_lb" "my_alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.ecs_security_group.id]
   subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
-  
+
 }
 
 # ALB Target Group
 resource "aws_lb_target_group" "my_target_group" {
-  name     = "${var.environment_name}-my-target-group"
-  port     = 80
-  protocol = "HTTP"
+  name        = "${var.environment_name}-my-target-group"
+  port        = 80
+  protocol    = "HTTP"
   target_type = "ip"
-  vpc_id   = aws_vpc.my_vpc.id
+  vpc_id      = aws_vpc.my_vpc.id
 }
 
 # ALB Listener

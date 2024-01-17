@@ -1,7 +1,7 @@
 ##############################  Outputs  #########################################
 
 output "aws_region" {
-  value =var.region
+  value = var.region
 }
 
 output "ecr_repository_url" {
@@ -9,7 +9,7 @@ output "ecr_repository_url" {
 }
 
 output "ecs_cluster_name" {
-  value =aws_ecs_cluster.my_ecs_cluster.name
+  value = aws_ecs_cluster.my_ecs_cluster.name
 }
 
 output "container_name" {

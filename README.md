@@ -6,3 +6,4 @@ It deploys an ECR repository, ECS Cluster, task definition and service task usin
 Container port is set to 3000, and fargate containers are placed in the private subnets.
 It deploys a Load Balancer to access the web application.
 It deploys an RDS Database within the private subnets.
+Added Git action code as well

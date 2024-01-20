@@ -1,0 +1,53 @@
+name: IaC-Pipeline
+# This workflow is developed as part of the PGDIP 2023-24 group 1 assignment
+# Important Note: the apply step is configured to run only after the plan step completes successfully, 
+# and specifically when there is a push to the master branch (which typically occurs after a pull request is merged). 
+# This is controlled by the needs and if conditions in the apply job of this workflow file. 
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      # ... (steps for checking out code, setting up Terraform) ...
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+        
+  # The below if: github.ref == 'refs/heads/master' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the master branch.
+  
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    steps:
+      # ... (repeat steps for checking out code, setting up Terraform) ...
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: <AWS_REGION>
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+          echo test, and deploy your project.

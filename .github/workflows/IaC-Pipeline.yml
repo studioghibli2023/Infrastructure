@@ -2,7 +2,7 @@ name: IaC-Pipeline
 # This workflow is developed as part of the PGDIP 2023-24 group 1 assignment
 # Important Note: the apply step is configured to run only after the plan step completes successfully, 
 # and specifically when there is a push to the master branch (which typically occurs after a pull request is merged). 
-# This is controlled by the needs and if conditions in the apply job of this workflow file.  
+# This is controlled by the needs and if conditions in the apply job of this workflow file.   
 
 on:
   pull_request:

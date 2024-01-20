@@ -1,16 +1,16 @@
 name: IaC-Pipeline
 # This workflow is developed as part of the PGDIP 2023-24 group 1 assignment
 # Important Note: the apply step is configured to run only after the plan step completes successfully, 
-# and specifically when there is a push to the master branch (which typically occurs after a pull request is merged). 
+# and specifically when there is a push to the main branch (which typically occurs after a pull request is merged). 
 # This is controlled by the needs and if conditions in the apply job of this workflow file.   
 
 on:
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - master
+      - main
 
 jobs:
   plan:
@@ -25,12 +25,12 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
         
-  # The below if: github.ref == 'refs/heads/master' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the master branch.
+  # The below if: github.ref == 'refs/heads/main' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the main branch.
   
   apply:
     needs: plan
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       # ... (repeat steps for checking out code, setting up Terraform) ...
 

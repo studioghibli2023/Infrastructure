@@ -32,6 +32,7 @@ jobs:
         with:
           tfsec_actions_working_dir: '.'  
           tfsec_actions_comment: true 
+          tfsec_exclude: ${{ env.TFSEC_EXCLUSIONS }}
 
   plan:
     needs: security_scan

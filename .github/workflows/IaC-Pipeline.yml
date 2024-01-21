@@ -27,6 +27,10 @@ jobs:
         run: |
           echo "TFSEC_EXCLUSIONS=$(cat tfsec-exclusions.txt | tr '\n' ',')" >> $GITHUB_ENV
 
+      - name: Debug - Print TFSEC Exclusions
+        run: echo "TFSEC Exclusions:" $TFSEC_EXCLUSIONS
+
+
       - name: Terraform Security Scan with tfsec
         uses: triat/terraform-security-scan@v1
         with:

@@ -22,6 +22,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
+      - name: Read tfsec exclusions
+        id: read-exclusions
+        run: |
+          echo "TFSEC_EXCLUSIONS=$(cat tfsec-exclusions.txt | tr '\n' ',')" >> $GITHUB_ENV
+
       - name: Terraform Security Scan with tfsec
         uses: triat/terraform-security-scan@v1
         with:

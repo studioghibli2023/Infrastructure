@@ -10,6 +10,11 @@ variable "environment_name" {
   default     = "studio-ghibli"
 }
 
+variable "vpc_cidr_block" {
+  description = "Define cidr block for the VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
 
 variable "container_name" {
   description = "Define container name"

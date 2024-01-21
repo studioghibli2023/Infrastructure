@@ -1,8 +1,10 @@
-name: IaC-Pipeline
 # This workflow is developed as part of the PGDIP 2023-24 group 1 assignment
 # Important Note: the apply step is configured to run only after the plan step completes successfully, 
 # and specifically when there is a push to the main branch (which typically occurs after a pull request is merged). 
 # This is controlled by the needs and if conditions in the apply job of this workflow file.   
+# The code in the apply job if: github.ref == 'refs/heads/main' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the main branch.
+
+name: IaC-Pipeline
 
 on:
   pull_request:
@@ -17,12 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      
       - name: Checkout Repo
         uses: actions/checkout@v2
       
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+        
+      - name: Configure AWS Credentials # Add this step to configure AWS credentials for the plan job
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-1' # Replace <AWS_REGION> with your actual AWS region
 
       - name: Terraform Init
         run: terraform init
@@ -30,21 +38,23 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
         
-  # The below if: github.ref == 'refs/heads/main' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the main branch.
-  
   apply:
     needs: plan
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      # ... (repeat steps for checking out code, setting up Terraform) ...
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials # Make sure this step is present as it is required to configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: <AWS_REGION>
+          aws-region: 'us-east-1' # Replace <AWS_REGION> with your actual AWS region
 
       - name: Terraform Init
         run: terraform init
@@ -55,4 +65,3 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-          echo test, and deploy your project.

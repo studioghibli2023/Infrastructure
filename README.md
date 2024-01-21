@@ -7,3 +7,4 @@ Container port is set to 3000, and fargate containers are placed in the private 
 It deploys a Load Balancer to access the web application.
 It deploys an RDS Database within the private subnets.
 Added Git action code as well
+pull request 2

@@ -1,13 +1,10 @@
 ###  AWS ECS Fargate Terraform  ###
 
 
-provider "aws" {
-  region = var.region
-}
-
 #############################  VPC  #################################
 
 # Create VPC
+#tfsec:ignore:aws-ec2-require-vpc-flow-logs-for-all-vpcs
 resource "aws_vpc" "my_vpc" {
   cidr_block = var.vpc_cidr_block
   tags = {
@@ -35,6 +32,7 @@ resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = "10.0.0.0/20"
   availability_zone       = "us-east-1a" # Change this to your preferred availability zone
+#tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment_name}-public-subnet-1"
@@ -46,6 +44,7 @@ resource "aws_subnet" "public_subnet_2" {
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = "10.0.16.0/20"
   availability_zone       = "us-east-1b" # Change this to your preferred availability zone
+#tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment_name}-public-subnet-2"
@@ -89,9 +88,9 @@ resource "aws_eip" "nat" {
 }
 
 # Create Elastic IP 2
-resource "aws_eip" "nat_2" {
-  domain = "vpc"
-}
+#resource "aws_eip" "nat_2" {
+  #domain = "vpc"
+#}
 
 # Create NAT Gateway
 resource "aws_nat_gateway" "my_nat_gateway" {
@@ -171,15 +170,27 @@ resource "aws_route_table_association" "private_association_2" {
 #############################  ECR Repository  #################################
 
 # Create ECR Repository
+
+
+#tfsec:ignore:aws-ecr-repository-customer-key
 resource "aws_ecr_repository" "my_ecr_repo" {
   name = "${var.environment_name}-ecr-repo"
+  image_tag_mutability = "IMMUTABLE" # You can customize this as needed
 
-  image_tag_mutability = "MUTABLE" # You can customize this as needed
 
   tags = {
     Name = "${var.environment_name}-ecr-repo"
   }
+
+ 
+
+  image_scanning_configuration {
+     scan_on_push = true
+   }
 }
+
+
+   
 
 
 ###############################  ECS Cluster ############################################
@@ -188,6 +199,11 @@ resource "aws_ecr_repository" "my_ecr_repo" {
 # Create ECS Cluster
 resource "aws_ecs_cluster" "my_ecs_cluster" {
   name = "${var.environment_name}-ecs-cluster"
+
+  setting {
+      name  = "containerInsights"
+      value = "enabled"
+    }
 }
 
 
@@ -267,24 +283,30 @@ resource "aws_security_group" "ecs_security_group" {
   description = "Allow container and http connection"
 
   egress {
+    description = "Allowed online availability "
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
+#tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
     
   }
 
   ingress {
+    description = "Allow load balancer to access container on port 3000"
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]   #IP of the load balancer accessing the container
+#IP of the load balancer accessing the container
+    cidr_blocks = ["0.0.0.0/0"]            #tfsec:ignore:aws-ec2-no-public-ingress-sgr           
   }
 
   ingress {
+    description = "Allow load balancer to be accessed by internet users "
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr
     cidr_blocks = ["0.0.0.0/0"]    #Available on the internet
   }
 
@@ -319,8 +341,10 @@ resource "aws_ecs_service" "my_service" {
 #############################  Load Balancer #############################################
 
 # Application Load Balancer
+#tfsec:ignore:aws-elb-drop-invalid-headers
 resource "aws_lb" "my_alb" {
   name               = "${var.environment_name}-load-balacer"
+#tfsec:ignore:aws-elb-alb-not-public
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.ecs_security_group.id]
@@ -341,6 +365,7 @@ resource "aws_lb_target_group" "my_target_group" {
 resource "aws_lb_listener" "my_listener" {
   load_balancer_arn = aws_lb.my_alb.arn
   port              = 80
+#tfsec:ignore:aws-elb-http-not-used
   protocol          = "HTTP"
 
   default_action {

@@ -23,15 +23,24 @@ variable "container_name" {
 }
 
 
-#enable for secure credentials
-#variable "db-username" {
-  #description = "Define database username"
-  #type        = string
-  #sensitive   = true
-#}
+variable "ubuntu-ami" {
+  description = "us-east-1 ubuntu AMI"
+  type        = string
+  default     = "ami-0c7217cdde317cfec"
+}
 
-#variable "db-password" {
-  #description = "Define database password"
-  #type        = string
- #sensitive   = true
-#}
+variable "db_name" {
+  description = "RDS database username"
+  default="mydb"
+}
+
+
+variable "db_username" {
+  description = "RDS database username"
+  default="admin"
+}
+
+variable "db_password" {
+  description = "RDS database password"
+  default= "StudioGhibli2023"
+}

@@ -1,0 +1,7 @@
+#Use this commands after SSH into bastion instance
+
+sudo apt update
+sudo apt install mariadb-server
+sudo apt install mariadb-client
+mysql -h studio-ghibli-db-instance.cx28qu4eu267.us-east-1.rds.amazonaws.com -P 3306 -u admin -p
+use mydb

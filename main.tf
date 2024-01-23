@@ -374,3 +374,13 @@ resource "aws_lb_listener" "my_listener" {
   }
 }
 
+# Configuration for the TF State file in S3 and Dynamo DB for state lcoking
+terraform {
+  backend "s3" {
+    bucket        = "terraform-remote-state-file"
+    key           = "my-environment/terraform.tfstate"
+    region        = "us-east-1"
+    dynamodb_table = "terraform-lock-table"  
+    encrypt       = true
+  }
+}

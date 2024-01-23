@@ -8,3 +8,4 @@ It deploys a Load Balancer to access the web application.
 It deploys an RDS Database within a private subnet and a Bastion jumb box in the public subnet. 
 Added Git action code as well
 pull request 2
+test

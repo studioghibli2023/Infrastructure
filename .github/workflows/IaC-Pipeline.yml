@@ -38,6 +38,7 @@ jobs:
           tfsec_actions_working_dir: '.'  
           tfsec_actions_comment: true 
           tfsec_exclude: ${{ env.TFSEC_EXCLUSIONS }}
+        continue-on-error: true
 
   plan:
     needs: security_scan

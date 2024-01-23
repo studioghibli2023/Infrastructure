@@ -3,6 +3,7 @@
 # and specifically when there is a push to the main branch (which typically occurs after a pull request is merged). 
 # This is controlled by the needs and if conditions in the apply job of this workflow file.   
 # The code in the apply job if: github.ref == 'refs/heads/main' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the main branch.
+# The terraform state will be stroed in an s3 bucket and locking mechanism will be implemented by the use of a DynamoDB which are added in the main.tf file
 
 name: IaC-Pipeline
 

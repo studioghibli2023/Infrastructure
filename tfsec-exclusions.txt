@@ -1,4 +1,1 @@
-aws-ec2-no-public-egress-sgr
-aws-ec2-no-public-ingress-sgr
-aws-ec2-no-public-ingress-sgr
-aws-elb-http-not-used
+

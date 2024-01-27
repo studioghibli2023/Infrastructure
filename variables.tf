@@ -31,16 +31,16 @@ variable "ubuntu-ami" {
 
 variable "db_name" {
   description = "RDS database username"
-  default="mydb"
+  default     = "mydb"
 }
 
 
 variable "db_username" {
   description = "RDS database username"
-  default="admin"
+  default     = "admin"
 }
 
 variable "db_password" {
   description = "RDS database password"
-  default= "StudioGhibli2023"
+  default     = "StudioGhibli2023"
 }

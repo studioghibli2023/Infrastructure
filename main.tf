@@ -18,7 +18,7 @@ resource "aws_security_group" "vpc_security_group" {
   vpc_id      = aws_vpc.my_vpc.id
   description = "Allow inbound access on port 80"
 
-  
+
 
   tags = {
     Name = "${var.environment_name}-vpc-security-group"
@@ -29,10 +29,10 @@ resource "aws_security_group" "vpc_security_group" {
 
 # Create Public Subnet
 resource "aws_subnet" "public_subnet_1" {
-  vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = "10.0.0.0/20"
-  availability_zone       = "us-east-1a" # Change this to your preferred availability zone
-#tfsec:ignore:aws-ec2-no-public-ip-subnet
+  vpc_id            = aws_vpc.my_vpc.id
+  cidr_block        = "10.0.0.0/20"
+  availability_zone = "us-east-1a" # Change this to your preferred availability zone
+  #tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment_name}-public-subnet-1"
@@ -41,10 +41,10 @@ resource "aws_subnet" "public_subnet_1" {
 
 # Create Public Subnet 2
 resource "aws_subnet" "public_subnet_2" {
-  vpc_id                  = aws_vpc.my_vpc.id
-  cidr_block              = "10.0.16.0/20"
-  availability_zone       = "us-east-1b" # Change this to your preferred availability zone
-#tfsec:ignore:aws-ec2-no-public-ip-subnet
+  vpc_id            = aws_vpc.my_vpc.id
+  cidr_block        = "10.0.16.0/20"
+  availability_zone = "us-east-1b" # Change this to your preferred availability zone
+  #tfsec:ignore:aws-ec2-no-public-ip-subnet
   map_public_ip_on_launch = true
   tags = {
     Name = "${var.environment_name}-public-subnet-2"
@@ -89,7 +89,7 @@ resource "aws_eip" "nat" {
 
 # Create Elastic IP 2
 #resource "aws_eip" "nat_2" {
-  #domain = "vpc"
+#domain = "vpc"
 #}
 
 # Create NAT Gateway
@@ -168,13 +168,4 @@ resource "aws_route_table_association" "private_association_2" {
 
 
 
-# Configuration for the TF State file in S3 and Dynamo DB for state lcoking -
-terraform {
-  backend "s3" {
-    bucket        = "tf-state-for-jimmy"
-    key           = "my-environment/terraform.tfstate"
-    region        = "us-east-2"
-    dynamodb_table = "tf-lock"  
-    encrypt       = true
-  }
-}
+

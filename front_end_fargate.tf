@@ -5,7 +5,7 @@
 
 #tfsec:ignore:aws-ecr-repository-customer-key
 resource "aws_ecr_repository" "my_ecr_repo" {
-  name = "${var.environment_name}-ecr-repo"
+  name                 = "${var.environment_name}-ecr-repo"
   image_tag_mutability = "IMMUTABLE" # You can customize this as needed
 
 
@@ -13,15 +13,15 @@ resource "aws_ecr_repository" "my_ecr_repo" {
     Name = "${var.environment_name}-ecr-repo"
   }
 
- 
+
 
   image_scanning_configuration {
-     scan_on_push = true
-   }
+    scan_on_push = true
+  }
 }
 
 
-   
+
 
 
 ###############################  ECS Cluster ############################################
@@ -32,9 +32,9 @@ resource "aws_ecs_cluster" "my_ecs_cluster" {
   name = "${var.environment_name}-ecs-cluster"
 
   setting {
-      name  = "containerInsights"
-      value = "enabled"
-    }
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 
@@ -110,7 +110,7 @@ resource "aws_ecs_task_definition" "my_task_definition" {
 
 # Create a security group for ECS tasks
 resource "aws_security_group" "ecs_security_group" {
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id      = aws_vpc.my_vpc.id
   description = "Allow container and http connection"
 
   egress {
@@ -118,9 +118,9 @@ resource "aws_security_group" "ecs_security_group" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-#tfsec:ignore:aws-ec2-no-public-egress-sgr
+    #tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
-    
+
   }
 
   ingress {
@@ -128,8 +128,8 @@ resource "aws_security_group" "ecs_security_group" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-#IP of the load balancer accessing the container
-    cidr_blocks = ["0.0.0.0/0"]            #tfsec:ignore:aws-ec2-no-public-ingress-sgr           
+    #IP of the load balancer accessing the container
+    cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:aws-ec2-no-public-ingress-sgr           
   }
 
   ingress {
@@ -137,8 +137,8 @@ resource "aws_security_group" "ecs_security_group" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-#tfsec:ignore:aws-ec2-no-public-ingress-sgr
-    cidr_blocks = ["0.0.0.0/0"]    #Available on the internet
+    #tfsec:ignore:aws-ec2-no-public-ingress-sgr
+    cidr_blocks = ["0.0.0.0/0"] #Available on the internet
   }
 
   tags = {
@@ -159,7 +159,7 @@ resource "aws_ecs_service" "my_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.my_target_group.arn
     container_name   = "studio-ghibli-container"
-    container_port   = 3000   #Change this if application container use different port
+    container_port   = 3000 #Change this if application container use different port
   }
 
   network_configuration {
@@ -174,8 +174,8 @@ resource "aws_ecs_service" "my_service" {
 # Application Load Balancer
 #tfsec:ignore:aws-elb-drop-invalid-headers
 resource "aws_lb" "my_alb" {
-  name               = "${var.environment_name}-load-balacer"
-#tfsec:ignore:aws-elb-alb-not-public
+  name = "${var.environment_name}-load-balacer"
+  #tfsec:ignore:aws-elb-alb-not-public
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.ecs_security_group.id]
@@ -196,8 +196,8 @@ resource "aws_lb_target_group" "my_target_group" {
 resource "aws_lb_listener" "my_listener" {
   load_balancer_arn = aws_lb.my_alb.arn
   port              = 80
-#tfsec:ignore:aws-elb-http-not-used
-  protocol          = "HTTP"
+  #tfsec:ignore:aws-elb-http-not-used
+  protocol = "HTTP"
 
   default_action {
     type             = "forward"

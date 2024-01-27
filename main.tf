@@ -168,4 +168,13 @@ resource "aws_route_table_association" "private_association_2" {
 
 
 
-
+# Configuration for the TF State file in S3 and Dynamo DB for state lcoking -
+terraform {
+  backend "s3" {
+    bucket        = "tf-state-for-jimmy"
+    key           = "my-environment/terraform.tfstate"
+    region        = "us-east-2"
+    dynamodb_table = "tf-lock"  
+    encrypt       = true
+  }
+}

@@ -82,24 +82,6 @@ resource "aws_subnet" "private_subnet_2" {
   }
 }
 
-
-
-#############################  ECR Repository  #################################
-
-# Create ECR Repository
-#tfsec:ignore:aws-ecr-enable-image-scans
-#tfsec:ignore:aws-ecr-repository-customer-key
-resource "aws_ecr_repository" "my_ecr_repo" {
-  name = "${var.environment_name}-ecr-repo"
-
-#tfsec:ignore:aws-ecr-enforce-immutable-repository
-  image_tag_mutability = "MUTABLE" # You can customize this as needed
-
-  tags = {
-    Name = "${var.environment_name}-ecr-repo"
-  }
-}
-
 # Configuration for the TF State file in S3 and Dynamo DB for state lcoking
 
 terraform {

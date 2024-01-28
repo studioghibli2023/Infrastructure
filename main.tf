@@ -129,10 +129,10 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
 # Backend configuration to use S3 and DynamoDB for state storage and locking
 terraform {
   backend "s3" {
-    bucket         = aws_s3_bucket.terraform_state_bucket.bucket
+    bucket         = aws_s3_bucket.terraform_state_bucket.arn
     key            = "terraform/state.tfstate"
     region         = "us-east-1"  # Set your desired region
-    dynamodb_table = aws_dynamodb_table.terraform_state_lock.name
+    dynamodb_table = aws_dynamodb_table.terraform_state_lock.arn
     encrypt        = true
   }
 }

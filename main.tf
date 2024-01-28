@@ -82,39 +82,14 @@ resource "aws_subnet" "private_subnet_2" {
   }
 }
 
-# Configuration for the TF State file in S3 and Dynamo DB for state lcoking
-
-
-# DynamoDB Table for state locking
-resource "aws_dynamodb_table" "terraform_state_lock" {
-  name           = var.dynamodb_table
-  billing_mode   = "PAY_PER_REQUEST"  # You can change this to PROVISIONED if needed
-  hash_key       = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-}
-
-# S3 Bucket for storing Terraform state
-resource "aws_s3_bucket" "terraform_state_bucket" {
-  bucket = var.s3_bucket  # Set your desired bucket name
-  acl    = "private"  # Set your desired ACL
-
-  versioning {
-    enabled = true
-  }
-
-
-}
+# Configuration for the TF State file in S3 and Dynamo DB for state locking
 
 terraform {
   backend "s3" {
-    bucket        = s3_bucket
+    bucket        = "terraform-remote-state-file"
     key           = "my-environment/terraform.tfstate"
     region        = "us-east-1"
-    dynamodb_table = var.dynamodb_table
+    dynamodb_table = "tf-lock-table"
     encrypt       = true
   }
 }

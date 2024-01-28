@@ -10,15 +10,4 @@ variable "environment_name" {
   default     = "studio-ghibli"
 }
 
-variable "dynamodb_table" {
-  description = "Define DynamoDB table"
-  type        = string
-  default     = "db_table"
-}
-
-variable "s3_bucket" {
-  description = "Define DynamoDB table"
-  type        = string
-  default     = "my_s3_bucket"
-}
 

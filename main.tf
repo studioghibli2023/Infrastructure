@@ -102,37 +102,11 @@ resource "aws_ecr_repository" "my_ecr_repo" {
 
 # Configuration for the TF State file in S3 and Dynamo DB for state lcoking-
 
-# DynamoDB Table for state locking
-resource "aws_dynamodb_table" "terraform_state_lock" {
-  name           = "terraform-state-lock"
-  billing_mode   = "PAY_PER_REQUEST"  # You can change this to PROVISIONED if needed
-  hash_key       = "LockID"
-
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-}
-
-# S3 Bucket for storing Terraform state
-resource "aws_s3_bucket" "terraform_state_bucket" {
-  bucket = "your-terraform-state-bucket"  # Set your desired bucket name
-  acl    = "private"  # Set your desired ACL
-
-  versioning {
-    enabled = true
-  }
-
-  
-}
-
-# Backend configuration to use S3 and DynamoDB for state storage and locking
 terraform {
   backend "s3" {
-    bucket         = aws_s3_bucket.terraform_state_bucket.arn
-    key            = "terraform/state.tfstate"
-    region         = "us-east-1"  # Set your desired region
-    dynamodb_table = aws_dynamodb_table.terraform_state_lock.arn
-    encrypt        = true
+    bucket        = "terraform-remote-state-file"
+    key           = "my-environment/terraform.tfstate"
+    region        = "us-east-2"
+    dynamodb_table = "tf-lock-table"
+    encrypt       = true
   }
-}

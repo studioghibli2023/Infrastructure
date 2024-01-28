@@ -100,7 +100,7 @@ resource "aws_ecr_repository" "my_ecr_repo" {
   }
 }
 
-# Configuration for the TF State file in S3 and Dynamo DB for state lcoking-
+# Configuration for the TF State file in S3 and Dynamo DB for state lcoking
 
 terraform {
   backend "s3" {

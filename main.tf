@@ -87,7 +87,7 @@ resource "aws_subnet" "private_subnet_2" {
 
 # DynamoDB Table for state locking
 resource "aws_dynamodb_table" "terraform_state_lock" {
-  name           = var.dynamodb_table
+  name           = "my_table"
   billing_mode   = "PAY_PER_REQUEST"  # You can change this to PROVISIONED if needed
   hash_key       = "LockID"
 
@@ -99,7 +99,7 @@ resource "aws_dynamodb_table" "terraform_state_lock" {
 
 # S3 Bucket for storing Terraform state
 resource "aws_s3_bucket" "terraform_state_bucket" {
-  bucket = var.s3_bucket  # Set your desired bucket name
+  bucket = "my_bucket"  # Set your desired bucket name
   acl    = "private"  # Set your desired ACL
 
   versioning {
@@ -111,10 +111,10 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
 
 terraform {
   backend "s3" {
-    bucket        = s3_bucket
+    bucket        = "my_bucket"
     key           = "my-environment/terraform.tfstate"
     region        = "us-east-1"
-    dynamodb_table = var.dynamodb_table
+    dynamodb_table = "my_table"
     encrypt       = true
   }
 }

@@ -16,6 +16,7 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
+<<<<<<< HEAD
 variable "container_name" {
   description = "Define container name"
   type        = string
@@ -44,3 +45,5 @@ variable "db_password" {
   description = "RDS database password"
   default     = "StudioGhibli2023"
 }
+=======
+>>>>>>> main

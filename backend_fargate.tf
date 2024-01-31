@@ -6,7 +6,7 @@
 #tfsec:ignore:aws-ecr-repository-customer-key
 resource "aws_ecr_repository" "my_ecr_repo" {
   name                 = "${var.environment_name}-ecr-repo"
-  image_tag_mutability = "IMMUTABLE" # You can customize this as needed
+  image_tag_mutability = "MUTABLE" # You can customize this as needed
 
 
   tags = {

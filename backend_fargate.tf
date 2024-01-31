@@ -192,7 +192,7 @@ resource "aws_lb_target_group" "my_target_group" {
   vpc_id      = aws_vpc.my_vpc.id
 
   health_check {
-    path                = "/app"  # Health check path
+    path                = "/"  # Health check path
     interval            = 30         # Interval between health checks (seconds)
     timeout             = 10         # Timeout for each health check (seconds)
     healthy_threshold   = 3          # Number of consecutive successful health checks to consider target healthy

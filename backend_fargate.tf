@@ -94,8 +94,8 @@ resource "aws_ecs_task_definition" "my_task_definition" {
       image = aws_ecr_repository.my_ecr_repo.repository_url
       portMappings = [
         {
-          containerPort = 8080
-          hostPort      = 8080
+          containerPort = 4200
+          hostPort      = 4200
         },
       ]
     },
@@ -125,8 +125,8 @@ resource "aws_security_group" "ecs_security_group" {
 
   ingress {
     description = "Allow load balancer to access container on port 8080"
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = 4200
+    to_port     = 4200
     protocol    = "tcp"
     #IP of the load balancer accessing the container
     cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:aws-ec2-no-public-ingress-sgr           
@@ -159,7 +159,7 @@ resource "aws_ecs_service" "my_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.my_target_group.arn
     container_name   = "studio-ghibli-container"
-    container_port   = 8080 #Change this if application container use different port
+    container_port   = 4200 #Change this if application container use different port
   }
 
   network_configuration {

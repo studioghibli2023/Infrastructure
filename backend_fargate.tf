@@ -4,13 +4,14 @@
 
 
 #tfsec:ignore:aws-ecr-repository-customer-key
-resource "aws_ecr_repository" "my_ecr_repo" {
-  name                 = "${var.environment_name}-ecr-repo"
+resource "aws_ecr_repository" "backend_ecr_repo" {
+  name                 = "backend-${var.environment_name}-ecr-repo"
+#tfsec:ignore:aws-ecr-enforce-immutable-repository
   image_tag_mutability = "MUTABLE" # You can customize this as needed
 
 
   tags = {
-    Name = "${var.environment_name}-ecr-repo"
+    Name = "backend-${var.environment_name}-ecr-repo"
   }
 
 
@@ -79,8 +80,8 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_role_attachment_ECS" {
 ###############################  ECS Task Definition ############################################
 
 # Create ECS Task Definition
-resource "aws_ecs_task_definition" "my_task_definition" {
-  family                   = "${var.environment_name}-task-family"
+resource "aws_ecs_task_definition" "backend_task_definition" {
+  family                   = "backend-${var.environment_name}-task-family"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -90,12 +91,12 @@ resource "aws_ecs_task_definition" "my_task_definition" {
   # ECS Container
   container_definitions = jsonencode([
     {
-      name  = var.container_name
-      image = aws_ecr_repository.my_ecr_repo.repository_url
+      name  = var.backend_container_name
+      image = aws_ecr_repository.backend_ecr_repo.repository_url
       portMappings = [
         {
-          containerPort = 4200
-          hostPort      = 4200
+          containerPort = 8080
+          hostPort      = 8080
         },
       ]
     },
@@ -109,7 +110,7 @@ resource "aws_ecs_task_definition" "my_task_definition" {
 
 
 # Create a security group for ECS tasks
-resource "aws_security_group" "ecs_security_group" {
+resource "aws_security_group" "backend_ecs_security_group" {
   vpc_id      = aws_vpc.my_vpc.id
   description = "Allow container and http connection"
 
@@ -125,8 +126,8 @@ resource "aws_security_group" "ecs_security_group" {
 
   ingress {
     description = "Allow load balancer to access container on port 8080"
-    from_port   = 4200
-    to_port     = 4200
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     #IP of the load balancer accessing the container
     cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:aws-ec2-no-public-ingress-sgr           
@@ -142,29 +143,29 @@ resource "aws_security_group" "ecs_security_group" {
   }
 
   tags = {
-    Name = "${var.environment_name}-ecs-security-group"
+    Name = "backend-${var.environment_name}-ecs-security-group"
   }
 }
 
 ###############################  ECS Service Task ############################################
 # ECS Service
-resource "aws_ecs_service" "my_service" {
-  name            = "${var.environment_name}-ecs-service-task"
+resource "aws_ecs_service" "backend_service" {
+  name            = "backend-${var.environment_name}-ecs-service-task"
   cluster         = aws_ecs_cluster.my_ecs_cluster.id
-  task_definition = aws_ecs_task_definition.my_task_definition.arn
+  task_definition = aws_ecs_task_definition.backend_task_definition.arn
   launch_type     = "FARGATE"
   desired_count   = 1
 
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.my_target_group.arn
-    container_name   = "studio-ghibli-container"
-    container_port   = 4200 #Change this if application container use different port
+    target_group_arn = aws_lb_target_group.backend_target_group.arn
+    container_name   = "backend-studio-ghibli-container"
+    container_port   = 8080 #Change this if application container use different port
   }
 
   network_configuration {
     subnets         = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
-    security_groups = [aws_security_group.ecs_security_group.id]
+    security_groups = [aws_security_group.backend_ecs_security_group.id]
 
   }
 }
@@ -173,26 +174,26 @@ resource "aws_ecs_service" "my_service" {
 
 # Application Load Balancer
 #tfsec:ignore:aws-elb-drop-invalid-headers
-resource "aws_lb" "my_alb" {
-  name = "${var.environment_name}-load-balacer"
+resource "aws_lb" "backend_alb" {
+  name = "BE-${var.environment_name}-load-balancer"
   #tfsec:ignore:aws-elb-alb-not-public
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.ecs_security_group.id]
+  security_groups    = [aws_security_group.backend_ecs_security_group.id]
   subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
 
 }
 
 # ALB Target Group
-resource "aws_lb_target_group" "my_target_group" {
-  name        = "${var.environment_name}-my-target-group"
+resource "aws_lb_target_group" "backend_target_group" {
+  name        = "BE-${var.environment_name}-my-target-group"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = aws_vpc.my_vpc.id
 
   health_check {
-    path                = "/"  # Health check path
+    path                = "/app"  # Health check path
     interval            = 30         # Interval between health checks (seconds)
     timeout             = 10         # Timeout for each health check (seconds)
     healthy_threshold   = 3          # Number of consecutive successful health checks to consider target healthy
@@ -202,14 +203,14 @@ resource "aws_lb_target_group" "my_target_group" {
 }
 
 # ALB Listener
-resource "aws_lb_listener" "my_listener" {
-  load_balancer_arn = aws_lb.my_alb.arn
+resource "aws_lb_listener" "backend_listener" {
+  load_balancer_arn = aws_lb.backend_alb.arn
   port              = 80
   #tfsec:ignore:aws-elb-http-not-used
   protocol = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.my_target_group.arn
+    target_group_arn = aws_lb_target_group.backend_target_group.arn
   }
 }

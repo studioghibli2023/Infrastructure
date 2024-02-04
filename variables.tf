@@ -17,10 +17,10 @@ variable "vpc_cidr_block" {
 }
 
 
-variable "container_name" {
+variable "backend_container_name" {
   description = "Define container name"
   type        = string
-  default     = "studio-ghibli-container"
+  default     = "backend-studio-ghibli-container"
 }
 
 

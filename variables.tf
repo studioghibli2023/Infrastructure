@@ -23,6 +23,12 @@ variable "backend_container_name" {
   default     = "backend-studio-ghibli-container"
 }
 
+variable "frontend_container_name" {
+  description = "Define frontend container name"
+  type        = string
+  default     = "frontend-studio-ghibli-container"
+}
+
 
 variable "ubuntu-ami" {
   description = "us-east-1 ubuntu AMI"

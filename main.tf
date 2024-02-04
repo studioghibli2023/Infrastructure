@@ -87,10 +87,10 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 }
 
-# Create Elastic IP 2
-#resource "aws_eip" "nat_2" {
-  #domain = "vpc"
-#}
+  #Create Elastic IP 2
+resource "aws_eip" "nat_2" {
+  domain = "vpc"
+}
 
 # Create NAT Gateway
 resource "aws_nat_gateway" "my_nat_gateway" {
@@ -104,14 +104,14 @@ resource "aws_nat_gateway" "my_nat_gateway" {
 
 
 # Create NAT Gateway 2
-#resource "aws_nat_gateway" "my_nat_gateway_2" {
-#allocation_id = aws_eip.nat_2.id
-#subnet_id     = aws_subnet.public_subnet_2.id
-#tags = {
-#Name = "${var.environment_name}-nat-gateway-2"
-#}
-# depends_on = [aws_internet_gateway.my_igw]
-#}
+resource "aws_nat_gateway" "my_nat_gateway_2" {
+allocation_id = aws_eip.nat_2.id
+subnet_id     = aws_subnet.public_subnet_2.id
+tags = {
+Name = "${var.environment_name}-nat-gateway-2"
+}
+ depends_on = [aws_internet_gateway.my_igw]
+}
 
 
 # Create Route Tables

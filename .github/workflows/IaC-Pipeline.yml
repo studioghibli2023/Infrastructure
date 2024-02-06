@@ -1,9 +1,9 @@
 # This workflow is developed as part of the PGDIP 2023-24 group 1 assignment
-# Important Note: the apply step is configured to run only after the plan step completes successfully, 
-# and specifically when there is a push to the main branch (which typically occurs after a pull request is merged). 
-# This is controlled by the needs and if conditions in the apply job of this workflow file.   
+# Important Note: the apply step is configured to run only after the plan step completes successfully,
+# and specifically when there is a push to the main branch (which typically occurs after a pull request is merged).
+# This is controlled by the needs and if conditions in the apply job of this workflow file.
 # The code in the apply job if: github.ref == 'refs/heads/main' && github.event_name == 'push' condition in the apply job ensures that this job runs only when there is a push event to the main branch.
-# The terraform state will be stroed in an s3 bucket and locking mechanism will be implemented by the use of a DynamoDB which are added in the main.tf file 
+# The terraform state will be stroed in an s3 bucket and locking mechanism will be implemented by the use of a DynamoDB which are added in the main.tf file
 
 name: IaC-Pipeline
 
@@ -11,17 +11,16 @@ on:
   pull_request:
     branches:
       - main
-      - terraform
+
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-
   security_scan:
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
@@ -34,39 +33,38 @@ jobs:
       - name: Debug - Print TFSEC Exclusions
         run: echo "TFSEC Exclusions:" $TFSEC_EXCLUSIONS
 
-
       - name: Terraform Security Scan with tfsec
         uses: triat/terraform-security-scan@v3
         with:
-          tfsec_actions_working_dir: '.'  
-          tfsec_actions_comment: true 
+          tfsec_actions_working_dir: "."
+          tfsec_actions_comment: true
           tfsec_exclude: ${{ env.TFSEC_EXCLUSIONS }}
         continue-on-error: true
 
   plan:
     needs: security_scan
     runs-on: ubuntu-latest
-  #  if: github.event_name == 'pull_request'
+    #  if: github.event_name == 'pull_request'
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-        
+
       - name: Configure AWS Credentials # Add this step to configure AWS credentials for the plan job
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-1'  
+          aws-region: "us-east-1"
 
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Plan
         run: terraform plan
-        
+
   apply:
     needs: plan
     runs-on: ubuntu-latest
@@ -74,7 +72,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
-      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
@@ -83,7 +81,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-1' # Replace <AWS_REGION> with your actual AWS region
+          aws-region: "us-east-1" # Replace <AWS_REGION> with your actual AWS region
 
       - name: Terraform Init
         run: terraform init
@@ -93,4 +91,3 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-

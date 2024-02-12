@@ -171,10 +171,10 @@ resource "aws_route_table_association" "private_association_2" {
 
 terraform {
   backend "s3" {
-    bucket        = aws_dynamodb_table.tf_lock_table-new.bucket
+    bucket        = aws_s3_bucket.terraform_remote_state_file_new.bucket
     key           = "my-environment/terraform.tfstate"
     region        = "us-east-1"
-    dynamodb_table = aws_s3_bucket.terraform_remote_state_file_new.name
+    dynamodb_table = aws_dynamodb_table.tf_lock_table-new.name
     encrypt       = true
   }
 }

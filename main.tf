@@ -173,8 +173,8 @@ terraform {
   backend "s3" {
     bucket        = "terraform-remote-state-file-new"
     key           = "my-environment/terraform.tfstate"
-    region        = var.region
-    dynamodb_table = "tf-lock-table"
+    region        = "us-east-1"
+    dynamodb_table = "tf-lock-table-new"
     encrypt       = true
   }
 }

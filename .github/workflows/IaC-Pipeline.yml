@@ -90,7 +90,9 @@ jobs:
         run: terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: |
+          terraform apply -auto-approve
+          echo "ELB_DNS_NAME=$(terraform output -raw backend_load_balancer_dns_name)" >> $GITHUB_ENV
       
   update_elb-name_in_backend_repo:
     needs: apply
@@ -103,4 +105,4 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
             "https://api.github.com/repos/https://github.com/studioghibli2023/backend.git/dispatches" \
-            -d '{"event_type": "update-elb", "client_payload": {"elbName": "your_new_elb_name"}}'
+             -d '{"event_type": "update-elb", "client_payload": {"elbName": "${{ env.ELB_DNS_NAME }}"}}'

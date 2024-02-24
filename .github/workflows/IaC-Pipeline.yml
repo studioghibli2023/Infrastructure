@@ -92,11 +92,8 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve
-      - name: Output ELB DNS Name to File
-        run: terraform output -raw backend_load_balancer_dns_name > elb_dns_name.txt
-
-      - name: Read ELB DNS Name and Set Env Var
-        run: echo "ELB_DNS_NAME=$(<elb_dns_name.txt)" >> $GITHUB_ENV
+          ELB_DNS_NAME=$(terraform output -raw backend_load_balancer_dns_name)
+          echo "ELB_DNS_NAME=$ELB_DNS_NAME" >> $GITHUB_ENV
       
   update_elb-name_in_backend_repo:
     needs: apply

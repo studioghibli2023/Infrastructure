@@ -124,3 +124,6 @@ jobs:
             -H "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
             "https://api.github.com/repos/studioghibli2023/backend/dispatches" \
              -d '{"event_type": "update-elb", "client_payload": {"elbName": "${{ env.ELB_DNS_NAME }}"}}'
+
+      - name: Echo ELB DNS Name
+        run: echo "ELB_DNS_NAME=${{ env.ELB_DNS_NAME }}"

@@ -102,7 +102,7 @@ jobs:
       
       - name: Extract and Set ELB DNS Name
         run: |
-          ELB_DNS_NAME=$(grep 'backend_load_balancer_dns_name=' terraform_output.txt | cut -d'=' -f2 | tr -d '"' | xargs)
+          ELB_DNS_NAME=$(grep 'load_balancer_dns_name=' terraform_output.txt | sed 's/.*load_balancer_dns_name=//' | cut -d':' -f1 | tr -d '"' | xargs)
           echo "Extracted ELB_DNS_NAME: $ELB_DNS_NAME"
           echo "ELB_DNS_NAME=$ELB_DNS_NAME" >> $GITHUB_ENV
 

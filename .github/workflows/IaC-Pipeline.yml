@@ -96,12 +96,17 @@ jobs:
       - name: Capture Terraform Outputs
         run: |
           echo "backend_load_balancer_dns_name=$(terraform output -raw backend_load_balancer_dns_name)" > terraform_output.txt
-          
-      - name: Read and Use Terraform Outputs
+     
+      - name: Debug terraform_output.txt content
+        run: cat terraform_output.txt
+      
+      - name: Extract and Set ELB DNS Name
         run: |
-         ELB_DNS_NAME=$(grep 'backend_load_balancer_dns_name=' terraform_output.txt | cut -d'=' -f2)
-         echo "ELB_DNS_NAME=${ELB_DNS_NAME}" >> $GITHUB_ENV
-         cat $GITHUB_ENV
+          ELB_DNS_NAME=$(grep 'backend_load_balancer_dns_name=' terraform_output.txt | cut -d'=' -f2 | tr -d '"' | xargs)
+          echo "Extracted ELB_DNS_NAME: $ELB_DNS_NAME"
+          echo "ELB_DNS_NAME=$ELB_DNS_NAME" >> $GITHUB_ENV
+
+
 
           
   update_elb-name_in_backend_repo:

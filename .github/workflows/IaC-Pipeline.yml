@@ -101,6 +101,7 @@ jobs:
         run: |
          ELB_DNS_NAME=$(grep 'backend_load_balancer_dns_name=' terraform_output.txt | cut -d'=' -f2)
          echo "ELB_DNS_NAME=${ELB_DNS_NAME}" >> $GITHUB_ENV
+         cat $GITHUB_ENV
 
           
   update_elb-name_in_backend_repo:

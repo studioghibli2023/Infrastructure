@@ -75,6 +75,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
 
       - name: Configure AWS Credentials # Make sure this step is present as it is required to configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -102,9 +104,10 @@ jobs:
       
       - name: Extract and Set ELB DNS Name
         run: |
-          ELB_DNS_NAME=$(grep 'load_balancer_dns_name=' terraform_output.txt | sed 's/.*load_balancer_dns_name=//' | cut -d':' -f1 | tr -d '"' | xargs)
-          echo "Extracted ELB_DNS_NAME: $ELB_DNS_NAME"
-          echo "ELB_DNS_NAME=$ELB_DNS_NAME" >> $GITHUB_ENV
+          run: echo "ELB_DNS_NAME=$(terraform output -raw backend_load_balancer_dns_name)" >> $GITHUB_ENV
+          
+      - name: Echo ELB DNS Name for Debugging
+        run: echo "ELB_DNS_NAME=${ELB_DNS_NAME}"
 
 
 

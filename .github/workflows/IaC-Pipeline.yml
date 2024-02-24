@@ -113,5 +113,5 @@ jobs:
             -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
-            "https://api.github.com/repos/https://github.com/studioghibli2023/backend.git/dispatches" \
+            "https://api.github.com/repos/studioghibli2023/backend/dispatches" \
              -d '{"event_type": "update-elb", "client_payload": {"elbName": "${{ env.ELB_DNS_NAME }}"}}'

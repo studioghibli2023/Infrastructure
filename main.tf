@@ -88,9 +88,9 @@ resource "aws_eip" "nat" {
 }
 
   #Create Elastic IP 2
-#resource "aws_eip" "nat_2" {
-  #domain = "vpc"
-#}
+resource "aws_eip" "nat_2" {
+  domain = "vpc"
+}
 
 # Create NAT Gateway
 resource "aws_nat_gateway" "my_nat_gateway" {

@@ -86,7 +86,7 @@ resource "aws_ecs_task_definition" "backend_task_definition" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "512"
-  memory                   = "2048"
+  memory                   = "3072"
 
   # ECS Container
   container_definitions = jsonencode([

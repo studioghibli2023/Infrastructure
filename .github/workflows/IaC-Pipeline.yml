@@ -97,19 +97,26 @@ jobs:
           
       - name: Capture Terraform Outputs
         run: |
-          echo "backend_load_balancer_dns_name=$(terraform output -raw backend_load_balancer_dns_name)" > terraform_output.txt
+          echo "backend_load_balancer_dns_name=$(terraform output -raw backend_load_balancer_dns_name)" > be_terraform_output.txt
+          echo "frontend_load_balancer_dns_name=$(terraform output -raw frontend_load_balancer_dns_name)" > fe_terraform_output.txt
      
       - name: Debug terraform_output.txt content
-        run: cat terraform_output.txt
+        run: 
+           cat be_terraform_output.txt
+           cat fe_terraform_output.txt
+           
       
-      - name: Extract ELB DNS Name from Terraform Output
+      - name: Extract ELB DNS Names from Terraform Output
         run: |
-          ELB_DNS_NAME=$(grep 'backend_load_balancer_dns_name=' terraform_output.txt | cut -d'=' -f2 | tr -d ' ')
-          echo "ELB_DNS_NAME=${ELB_DNS_NAME}" >> $GITHUB_ENV
+          BE_ELB_DNS_NAME=$(grep 'backend_load_balancer_dns_name=' be_terraform_output.txt | cut -d'=' -f2 | tr -d ' ')
+          echo "BE_ELB_DNS_NAME=${BE_ELB_DNS_NAME}" >> $GITHUB_ENV
+          FE_ELB_DNS_NAME=$(grep 'frontend_load_balancer_dns_name=' fe_terraform_output.txt | cut -d'=' -f2 | tr -d ' ')
+          echo "FE_ELB_DNS_NAME=${FE_ELB_DNS_NAME}" >> $GITHUB_ENV
 
       - name: Echo ELB DNS Name
-        run: echo "ELB_DNS_NAME=${{ env.ELB_DNS_NAME }}"
-        
+        run: |
+          echo "BE_ELB_DNS_NAME=${{ env.BE_ELB_DNS_NAME }}"
+          echo "FE_ELB_DNS_NAME=${{ env.FE_ELB_DNS_NAME }}"
 
       - name: Trigger Application Repo Update
         run: |
@@ -118,7 +125,12 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.REPO_ACCESS_TOKEN }}" \
             "https://api.github.com/repos/studioghibli2023/backend/dispatches" \
-             -d '{"event_type": "update-elb", "client_payload": {"elbName": "${{ env.ELB_DNS_NAME }}"}}'
+             -d '{"event_type": "update-elb", "client_payload": {"elbName": "${{ env.BE_ELB_DNS_NAME }}"}}'
+            "https://api.github.com/repos/studioghibli2023/frontend/dispatches" \
+             -d '{"event_type": "update-elb", "client_payload": {"elbName": "${{ env.FE_ELB_DNS_NAME }}"}}'
 
       - name: Echo ELB DNS Name
-        run: echo "ELB_DNS_NAME=${{ env.ELB_DNS_NAME }}"
+        run: |
+          echo "BE_ELB_DNS_NAME=${{ env.BE_ELB_DNS_NAME }}"
+          echo "FE_ELB_DNS_NAME=${{ env.FE_ELB_DNS_NAME }}"
+          

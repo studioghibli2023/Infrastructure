@@ -101,7 +101,7 @@ jobs:
           echo "frontend_load_balancer_dns_name=$(terraform output -raw frontend_load_balancer_dns_name)" > fe_terraform_output.txt
      
       - name: Debug terraform_output.txt content
-        run: 
+        run: |
            cat be_terraform_output.txt
            cat fe_terraform_output.txt
            

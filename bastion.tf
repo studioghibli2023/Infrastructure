@@ -28,7 +28,7 @@ resource "aws_security_group" "bastion_sg" {
     to_port     = 22
     protocol    = "tcp"
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr
-    cidr_blocks = ["0.0.0.0/0"] #use my ip for security
+    cidr_blocks = ["0.0.0.0/0"] #it will be used a specific ip address
     #tfsec:ignore:aws-ec2-add-description-to-security-group-rule
   }
 

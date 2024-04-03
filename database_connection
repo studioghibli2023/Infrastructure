@@ -28,12 +28,7 @@ CREATE TABLE user_table (
     course_id INT
 );
 
-INSERT INTO course (id,name, description , image, price, duration) VALUES (0,'Course 1' , 'Course desc', 'some image', 200, 2);
-INSERT INTO course (id,name, description , image, price, duration) VALUES (1,'Course 2' , 'Course desc', 'some image', 300, 3);
-INSERT INTO course (id,name, description , image, price, duration) VALUES (2,'Course 2' , 'Course desc', 'some image', 400, 4);
 
-INSERT INTO user_table (id,name, email , role, password) VALUES (1,'Test' , 'test@test.com', 1, 'thetest');
-INSERT INTO user_table (id,name, email , role, password, course_id) VALUES (2,'John' , 'john@test.com', 2, 'theJohn', 1);
 
 INSERT INTO course (id,name, description , image, price, duration) VALUES (0,'Movie making in 3D' , 'This course will teach you how to make movies in 3D', 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA0L2pvYjcyMS0xOTQteC5qcGc.jpg', 500, 15);
 INSERT INTO course (id,name, description , image, price, duration) VALUES (1,'Movie making for beginners' , 'This course will teach you the basic movie making techniques', 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA3L2pvYjk1MC0wNzAuanBn.jpg', 750, 8);
@@ -41,34 +36,10 @@ INSERT INTO course (id,name, description , image, price, duration) VALUES (2,'Mo
 INSERT INTO course (id,name, description , image, price, duration) VALUES (3,'Movie making for advanced' , 'This course will teach you how professional movie making techniques', 'https://static.vecteezy.com/system/resources/previews/003/562/476/original/film-industry-glyph-icon-vector.jpg', 1250, 12);
 
 
+INSERT INTO user_table (id,name, email , role, password) VALUES (1,'admin' , 'admin@test.com', 1, 'admin');
+INSERT INTO user_table (id,name, email , role, password, course_id) VALUES (2,'John' , 'john@test.com', 2, 'theJohn', 1);
 
 
 
-{
-      title: 'Movie making in 3D',
-      description: 'This course will teach you how to make movies in 3D',
-      price: 500,
-      durtation: 15,
-      imageSrc: 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA0L2pvYjcyMS0xOTQteC5qcGc.jpg',
-    },
-    {
-      title: 'Movie making for beginners',
-      description: 'This course will teach you the basic movie making techniques',
-      price: 750,
-      durtation: 8,
-      imageSrc: 'https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA3L2pvYjk1MC0wNzAuanBn.jpg',
-    },
-    {
-      title: 'Movie making for intermediates',
-      description: 'This course will teach you the more advanced movie making techniques',
-      price: 1000,
-      durtation: 10,
-      imageSrc: 'https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L2pvYjcyMy0wNjEtcC5wbmc.png',
-    },
-    {
-      title: 'Movie making for advanced',
-      description: 'This course will teach you how professional movie making techniques',
-      price: 1250,
-      durtation: 12,
-      imageSrc: 'https://static.vecteezy.com/system/resources/previews/003/562/476/original/film-industry-glyph-icon-vector.jpg',
-    }
+
+
